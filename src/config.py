@@ -1,3 +1,5 @@
+import os
+
 header = {'Host': 'm.weibo.cn',
           'Connection': 'keep-alive',
           'Content-Length': 30,
@@ -14,3 +16,4 @@ header = {'Host': 'm.weibo.cn',
           }
 WEIBO_USERNAME = os.environ.get('WEIBO_USERNAME')
 WEIBO_PASSWORD = os.environ.get('WEIBO_PASSWORD')
+PAGE_ONE_URL = 'https://m.weibo.cn/api/container/getIndex?containerid=2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO&page_type=03&page=1'

@@ -10,7 +10,8 @@ import binascii
 import requests
 import urllib.parse
 
-from config import WEIBO_USERNAME, WEIBO_PASSWORD
+from helper import parse_mblog_mids
+from config import WEIBO_USERNAME, WEIBO_PASSWORD, PAGE_ONE_URL
 
 class WeiBo(object):
     """
@@ -27,7 +28,7 @@ class WeiBo(object):
         self.user_nick = None
 
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"})
+        self.session.headers.update({"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"})
         self.session.get("http://weibo.com/login.php")
         return
 
@@ -145,6 +146,17 @@ class WeiBo(object):
     def post(self, url, data):
         return self.session.post(url, data=data)
 
+    def get_mblog_mids(self):
+        mblog_url = 'https://m.weibo.cn/api/container/getIndex?containerid=2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO&page=1'
+        params = {
+            'containerid': '2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO',
+            'page_type': '01',
+            'page': '1',
+        }
+        response = self.session.get("https://m.weibo.cn/api/container/getIndex", params=params)
+        mblog_ids = parse_mblog_mids(response.json())
+        return mblog_ids
+        
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s\t%(levelname)s\t%(message)s")
