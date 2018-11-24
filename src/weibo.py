@@ -28,7 +28,8 @@ class WeiBo(object):
         self.user_nick = None
 
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"})
+        self.session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36"})
         self.session.get("http://weibo.com/login.php")
         return
 
@@ -143,8 +144,8 @@ class WeiBo(object):
         password = binascii.b2a_hex(password)
         return password.decode()
 
-    def post(self, url, data):
-        return self.session.post(url, data=data)
+    def post(self, url, data, **kwargs):
+        return self.session.post(url, data=data, **kwargs)
 
     def get_mblog_mids(self):
         mblog_url = 'https://m.weibo.cn/api/container/getIndex?containerid=2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO&page=1'
@@ -153,9 +154,31 @@ class WeiBo(object):
             'page_type': '01',
             'page': '1',
         }
+        headers = {}
         response = self.session.get("https://m.weibo.cn/api/container/getIndex", params=params)
         mblog_ids = parse_mblog_mids(response.json())
         return mblog_ids
+
+    def del_mblog(self):
+        url = 'https://weibo.com/aj/mblog/del?ajwvr=6'
+        count = 1
+        while True:
+            mids = self.get_mblog_mids()
+            if not mids:
+                logging.info('这里似乎没有微博了，10秒后自动重试...')
+                time.sleep(10)
+            headers = {'Referer': 'http://weibo.com/ayouhappiness/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'}
+            for mid in mids:
+                data = {'mid': mid}
+                response = self.post(url, data=data, headers=headers)
+                ret = response.json()
+                ret_code = ret.get('code')
+                if ret_code == '100000':
+                    logging.info('成功删除第{0}条微博...'.format(str(count)))
+                    count += 1
+                    time.sleep(1)
+                else:
+                    logging.error('删除失败，请检查重试！')
         
 
 if __name__ == "__main__":
