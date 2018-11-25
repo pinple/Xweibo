@@ -11,7 +11,7 @@ import requests
 import urllib.parse
 
 from helper import parse_mblog_mids
-from config import WEIBO_USERNAME, WEIBO_PASSWORD, PAGE_ONE_URL
+from config import WEIBO_USERNAME, WEIBO_PASSWORD
 
 class WeiBo(object):
     """
@@ -148,16 +148,34 @@ class WeiBo(object):
         return self.session.post(url, data=data, **kwargs)
 
     def get_mblog_mids(self):
-        mblog_url = 'https://m.weibo.cn/api/container/getIndex?containerid=2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO&page=1'
+        url = 'https://weibo.com/p/aj/v6/mblog/mbloglist'
         params = {
-            'containerid': '2304135610949777_-_WEIBO_SECOND_PROFILE_WEIBO',
-            'page_type': '01',
-            'page': '1',
+                'ajwvr': '6',
+                'domain':'100505',
+                'is_search': '0',
+                'visible': '0',
+                'is_all': '1',
+                'is_tag': '0',
+                'profile_ftype': '1',
+                'page': '1',
+                'pagebar': '1',
+                'pl_name':'Pl_Official_MyProfileFeed__19',
+                'id': '100505' + self.user_uniqueid,
+                'script_uri': '/' + self.user_uniqueid + '/profile',
+                'feed_type': '0',
+                'pre_page': '5',
+                'domain_op': '100505',
+                '__rnd': str(time.time()*1000)[:13]
         }
-        headers = {}
-        response = self.session.get("https://m.weibo.cn/api/container/getIndex", params=params)
-        mblog_ids = parse_mblog_mids(response.json())
-        return mblog_ids
+        response = self.session.get(url, params=params)
+        ret = response.json()
+        code = ret.get('code')
+        data = ret.get('data')
+        prog = re.compile('\s+mid="(\d+)"\s+')
+        result = prog.findall(data)
+        logging.info('mid list: {0}'.format(result))
+        logging.info('length: {0}'.format(len(set(result))))
+        return set(result)
 
     def del_mblog(self):
         url = 'https://weibo.com/aj/mblog/del?ajwvr=6'
@@ -167,7 +185,7 @@ class WeiBo(object):
             if not mids:
                 logging.info('这里似乎没有微博了，10秒后自动重试...')
                 time.sleep(10)
-            headers = {'Referer': 'http://weibo.com/ayouhappiness/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'}
+            headers = {'Referer': 'http://weibo.com/{0}/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'.format(self.user_uniqueid)}
             for mid in mids:
                 data = {'mid': mid}
                 response = self.post(url, data=data, headers=headers)
