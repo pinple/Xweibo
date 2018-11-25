@@ -25,6 +25,14 @@ python src/del.py
 
 ![del-log](./src/img/del-log.jpg)
 
+### 
+
+|              运行前              |             运行后             |
+| :------------------------------: | :----------------------------: |
+| ![before](./src/img/before.jpeg) | ![after](./src/img/after.jpeg) |
+
+
+
 ## **TODO**
 
 - [ ] 增加批量取关功能，仅保留互关好友（针对微博买粉丝的现象，自动帮你关注博主）
