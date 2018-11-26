@@ -23,20 +23,22 @@ python src/del.py
 
 ## 使用效果
 
-![del-log](./src/img/del-log.jpg)
+![del-log](./src/imgs/del-log.jpg)
 
 ### 
 
 |              运行前              |             运行后             |
 | :------------------------------: | :----------------------------: |
-| ![before](./src/img/before.jpeg) | ![after](./src/img/after.jpeg) |
+| ![before](./src/imgs/before.jpg) | ![after](./src/imgs/after.jpg) |
 
 
 
 ## **TODO**
 
 - [ ] 增加批量取关功能，仅保留互关好友（针对微博买粉丝的现象，自动帮你关注博主）
+- [ ] 自动转发抽奖微博、关注抽奖博主、按抽奖规则@多位好友
+- [ ] 分析已中奖微博用户的微博内容，自动发布原创微博，避免被微博识别为🤖
 
-
+## 感谢
 
 最后，要是您觉得有用的话，点个star吧，这是对我最大的鼓励，谢谢啦~
