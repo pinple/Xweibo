@@ -197,6 +197,30 @@ class WeiBo(object):
                     time.sleep(1)
                 else:
                     logging.error('删除失败，请检查重试！')
+
+    def get_myfollow(self):
+        url = "https://weibo.com/p/1005055610949777/myfollow"
+        params = {
+            't': '1',
+            'pids': 'Pl_Official_RelationMyfollow__95',
+            'cfs': '',
+            'Pl_Official_RelationMyfollow__95_page': '1',
+            'ajaxpagelet': '1',
+            'ajaxpagelet_v6': '1',
+            '__ref': '/' + self.user_uniqueid + '/follow?rightmod=0&wvr=6',
+            '_t':' FM_' + str(time.time()*100000)[:15]
+        }
+        response = self.session.get(url, params=params)
+        text = response.text
+        prog = re.compile('action-data=\\"(.+)\\"')
+        result = prog.findall(text)
+        with open('result.txt', 'w+') as f:
+            f.write(text)
+        logging.info('follow list: {0}'.format(result))
+
+    def unfollow(self):
+        pass
+        
         
 
 if __name__ == "__main__":
